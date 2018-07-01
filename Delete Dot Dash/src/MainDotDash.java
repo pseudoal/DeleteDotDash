@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.file.FileVisitResult.*;
@@ -12,10 +13,18 @@ import static java.nio.file.FileVisitResult.*;
 public class MainDotDash {
 
 	private static final String INPUT_PATH = "/Volumes/TOSHIBA EXT/MUSIK/Music Media";
+	//private static final String INPUT_PATH = "/Users/alan/Dropbox";
 	private static final String regex = "._";
+    private static ArrayList<String> deletedNames;
 	
 	public static void main(String[] args) {
+		deletedNames = new ArrayList<String>();
 		listf(INPUT_PATH);
+		if (deletedNames.size() == 1) {
+		    System.out.println("Done deleting files. " + deletedNames.size() + " file was deleted.");	
+		} else {
+		    System.out.println("Done deleting files. " + deletedNames.size() + " files were deleted.");
+		}
 	}
 	
 	/**
@@ -25,14 +34,15 @@ public class MainDotDash {
 	 */
 	public static void listf(String directoryName) {
 	    File directory = new File(directoryName);
-
+	    
 	    // Get all the files from a directory.
 	    File[] fList = directory.listFiles();
 	    for (File file : fList) {
-	        if (file.isFile() && file.getName().contains(regex)) {
+	        if (file.isFile() && file.getName().contains(regex) && file.getName().contains(".mp3")) {
 	            try {
 	            	System.out.println("Deleting " + file.getAbsolutePath());
 					deleteFileOrFolder(file.toPath());
+					deletedNames.add(file.getName());
 				} catch (IOException e) {
 					throw new RuntimeException("Could not delete file " + file.getName() + ": " + e.getMessage());
 				}
